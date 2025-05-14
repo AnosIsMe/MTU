@@ -42,43 +42,46 @@ do
 
 
 
-    Tabs.Main:AddButton({
-        Title = "Bay đến vị trí Jungle",
-        Description = "Click để bay đến Jungle với tốc độ 300",
-        Callback = function()
-            local Players = game:GetService("Players")
-            local RunService = game:GetService("RunService")
-            local player = Players.LocalPlayer
-            local char = player.Character or player.CharacterAdded:Wait()
-            local hrp = char:WaitForChild("HumanoidRootPart")
-    
-            -- Vị trí bạn muốn bay đến
-            local targetPosition = Vector3.new(-1368.65405, 62.2030029, -56.9450073)
-            local speed = 300
-    
-            -- Tính thời gian bay
-            local distance = (hrp.Position - targetPosition).Magnitude
-            local travelTime = distance / speed
-    
-            -- Tạo BodyVelocity để bay
-            local bodyVelocity = Instance.new("BodyVelocity")
-            bodyVelocity.MaxForce = Vector3.new(1e9, 1e9, 1e9)
-            bodyVelocity.Velocity = (targetPosition - hrp.Position).Unit * speed
-            bodyVelocity.Parent = hrp
-    
-            -- Hủy sau khi đến nơi
-            task.delay(travelTime, function()
-                bodyVelocity:Destroy()
-                hrp.CFrame = CFrame.new(targetPosition) -- Đặt lại chính xác vị trí
-            end)
-    
-            Fluent:Notify({
-                Title = "Bay",
-                Content = "Đang bay đến Jungle...",
-                Duration = 3
-            })
+Tabs.Main:AddButton({
+    Title = "Fly to Jungle",
+    Description = "Fly to Jungle location",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character
+        if character then
+            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
+                -- Enable flying
+                local flySpeed = 50
+                local targetPosition = Vector3.new(-1368.65405, 62.2030029, -56.9450073)
+                
+                -- Create a flying function
+                local function flyToPosition()
+                    local startPosition = humanoidRootPart.Position
+                    local distance = (targetPosition - startPosition).Magnitude
+                    local direction = (targetPosition - startPosition).Unit
+                    
+                    -- Disable gravity temporarily
+                    humanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+                    
+                    -- Fly to position
+                    for i = 0, distance, flySpeed do
+                        if not humanoidRootPart then return end
+                        local newPosition = startPosition + (direction * i)
+                        humanoidRootPart.CFrame = CFrame.new(newPosition)
+                        wait(0.01)
+                    end
+                    
+                    -- Set final position
+                    humanoidRootPart.CFrame = CFrame.new(targetPosition)
+                end
+                
+                -- Start flying
+                flyToPosition()
+            end
         end
-    })
+    end
+})
     
 
 
