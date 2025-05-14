@@ -40,7 +40,7 @@ do
         Content = "This is a paragraph.\nSecond line!"
     })
 
-    
+
     Tabs.Main:AddButton({
         Title = "Fly to Jungle",
         Description = "Fly to Jungle location",
@@ -53,6 +53,47 @@ do
                     -- Enable flying
                     local flySpeed = 50
                     local targetPosition = Vector3.new(-1368.65405, 62.2030029, -56.9450073)
+                    
+                    -- Create a flying function
+                    local function flyToPosition()
+                        local startPosition = humanoidRootPart.Position
+                        local distance = (targetPosition - startPosition).Magnitude
+                        local direction = (targetPosition - startPosition).Unit
+                        
+                        -- Disable gravity temporarily
+                        humanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+                        
+                        -- Fly to position
+                        for i = 0, distance, flySpeed do
+                            if not humanoidRootPart then return end
+                            local newPosition = startPosition + (direction * i)
+                            humanoidRootPart.CFrame = CFrame.new(newPosition)
+                            wait(0.01)
+                        end
+                        
+                        -- Set final position
+                        humanoidRootPart.CFrame = CFrame.new(targetPosition)
+                    end
+                    
+                    -- Start flying
+                    flyToPosition()
+                end
+            end
+        end
+    })
+    
+    Tabs.Main:AddButton({
+        Title = "Fly to Jungle",
+        Description = "Fly to Jungle location",
+        Callback = function()
+            local player = game.Players.LocalPlayer
+            local character = player.Character
+            if character then
+                local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                if humanoidRootPart then
+                    -- Enable flying
+                    local flySpeed = 50
+                    local targetPosition = Vector3.new(-832.372009, 34.6650085, 1621.47705, -0.965929747, 0, -0.258804798, 0, 1, 0, 0.258804798, 0, -0.965929747)
                     
                     -- Create a flying function
                     local function flyToPosition()
